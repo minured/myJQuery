@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>手写jQuery</title>
+    <style>
+      .test {
+        border: 1px solid black;
+        margin-bottom: 5px;
+        width: 200px;
+      }
+      .red {
+        background: red;
+        border: 2px solid orange;
+      }
+      .child {
+          border: 1px solid black;
+          width: 50px;
+          margin:5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test test1">
+        test1
+      <div class="child child1 childNext"><span>child1</span></div>
+      <div class="child">child2</div>
+      <div class="child childPrev">child3</div>
+    </div>
+    <div class="test test2">
+        test2
+      <div class="child childNext">child4</div>
+      <div class="child childPrev">child5</div>
+    </div>
+    <script src="jquery.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
