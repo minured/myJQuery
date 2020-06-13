@@ -57,4 +57,35 @@ let api = $(".test")
 // })
 
 
+// const btn3 = document.createElement('button')
+// btn3.innerText = "btn3"
+// $('.childNext').after(btn3)
+
+// const $childNext = $(".childNext")
+// $('.child1').after($childNext)
+
+// const div2 = document.createElement('div')
+// div2.innerText = "div2"
+// $('.child').before(div2)
+
+// const $childPrev = $('.childPrev')
+// $('.child').before($childPrev)
+
+// const div3 = document.createElement('div')
+// div3.style.border = "1px solid red"
+// div3.innerText = 'div3'
+// $('.child').wrap(div3)
+
+// const $div4 = $('<div>div4</div>')
+// $div4.style({border: "1px solid red"})
+// $div4.text("div4")
+// $('.child').wrap($div4)
+
+// $(".childNext").remove().addClass('red').appendTo($('.test1'))
+
+// const $children = $(".test1").empty().addClass('red').appendTo($('.test2'))
+// const $test1 = $('.test1').empty(false).addClass('red')
+
+// console.log($('.test1').attr('class'))
+// $('.test1').attr('class', "test test1 blue red")
 

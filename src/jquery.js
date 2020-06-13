@@ -15,10 +15,9 @@ window.$ = window.jQuery = (selectorOrArrayOrTemplate) => {
   function createEl(string) {
     const container = document.createElement("template");
     container.innerHTML = string.trim();
-    return container.content.firstChild
-     
+    return container.content.firstChild;
   }
-  
+
   //相当于 api.__proto__ = jQuery.prototype
   const api = Object.create(jQuery.prototype);
   //批量添加私有属性
@@ -43,7 +42,7 @@ jQuery.prototype = {
     return this;
   },
   getEl(index) {
-    return this.elements[index]
+    return this.elements[index];
   },
   printEl() {
     console.log(this.elements);
@@ -67,28 +66,28 @@ jQuery.prototype = {
     children.oldApi = this;
     return jQuery(children);
   },
-  appendTo(parentNode){
+
+  appendTo(parentNode) {
     if (parentNode instanceof Element) {
-      this.each(node => {
-        parentNode.appendChild(node)
-      })
+      this.each((node) => {
+        parentNode.appendChild(node);
+      });
     } else if (parentNode.isJQuery) {
-      this.each(node => {
-        parentNode.getEl(0).appendChild(node)
-      })
+      this.each((node) => {
+        parentNode.getEl(0).appendChild(node);
+      });
     }
-    return this
+    return this;
   },
   append(children) {
-    console.log('fuck')
     if (children instanceof Element) {
-      this.getEl(0).appendChild(children) //一个node只能添加到一个位置
+      this.getEl(0).appendChild(children); //一个node只能添加到一个位置
     } else if (children instanceof NodeList) {
       for (let i = 0; i < children.length; i++) {
-        this.getEl(0).appendChild(children[i])
+        this.getEl(0).appendChild(children[i]);
       }
     } else if (children.isJQuery) {
-      children.each(node => this.getEl(0).appendChild(node))
+      children.each((node) => this.getEl(0).appendChild(node));
     }
   },
   parent() {
@@ -147,9 +146,39 @@ jQuery.prototype = {
     array.oldApi = this;
     return jQuery(array);
   },
+  after(node) {
+    const firstNode = this.getEl(0);
+    if (node instanceof Node) {
+      firstNode.parentNode.insertBefore(node, firstNode.nextSibling);
+    } else if (node.isJQuery) {
+      node.each((n) =>
+        firstNode.parentNode.insertBefore(n, firstNode.nextSibling)
+      );
+    }
+  },
+  before(node) {
+    const firstNode = this.getEl(0);
+    if (node instanceof Node) {
+      firstNode.parentNode.insertBefore(node, firstNode);
+    } else if (node.isJQuery) {
+      node.each((n) => firstNode.parentNode.insertBefore(n, firstNode));
+    }
+    node.parentNode.insertBefore(node2, node);
+  },
+  wrap(parentNode) {
+    if (parentNode.isJQuery) {
+      parentNode = parentNode.elements[0];
+    }
+    if (parentNode instanceof Node) {
+      this.parent().append(parentNode);
+      this.each((n) => parentNode.appendChild(n));
+    }
+  },
   end() {
     return this.oldApi;
   },
+
+  // 样式
   addClass(className) {
     this.each((node) => {
       node.classList.add(className);
@@ -169,111 +198,90 @@ jQuery.prototype = {
     });
     return array;
   },
-
-  text(string) {
-    if (arguments.length === 1) {
-     
-      this.each(node => node.innerText = string)
-
-    } else if (arguments.length === 0) {
-        return this.getEl(0).innerText
-    }
-  },
-  html(string) {
-    if (arguments.length === 1) {
-      this.each( node => node.innerHTML = string)
-    } else if (arguments.length === 0) {
-      return this.getEl(0).innerHTML
-    }
-  },
   // style只能获取内联样式
   style(name, value) {
     // $dom.style('color', 'red)
     if (arguments.length === 2) {
-      this.each(node => node.style[name] = value)
+      this.each((node) => (node.style[name] = value));
     } else if (arguments.length === 1) {
       //$dom.style('color')
       if (typeof name === "string") {
-        let array = []
-        this.each(node => array.push(node.style[name]))
-        return array
+        let array = [];
+        this.each((node) => array.push(node.style[name]));
+        return array;
         //$dom.style({color: 'red', font-size: '16px'})
       } else if (name instanceof Object) {
-        this.each(node => {
+        this.each((node) => {
           for (let key in name) {
             node.style[key] = name[key];
           }
-        })
+        });
       }
     }
   },
+
+  text(string) {
+    if (arguments.length === 1) {
+      this.each((node) => (node.innerText = string));
+    } else if (arguments.length === 0) {
+      return this.getEl(0).innerText;
+    }
+  },
+  html(string) {
+    if (arguments.length === 1) {
+      this.each((node) => (node.innerHTML = string));
+    } else if (arguments.length === 0) {
+      return this.getEl(0).innerHTML;
+    }
+  },
+  attr(name, value) {
+    if (arguments.length === 2) {
+      this.each(node => node.setAttribute(name, value))
+    } else if (arguments.length === 1) {
+      return this.getEl(0).getAttribute(name)
+    }
+  },
+
   //事件
   on(eventType, fn, capture = false) {
-    this.each(node => {
-      node.addEventListener(eventType, fn, capture)
-    })
-    return this
+    this.each((node) => {
+      node.addEventListener(eventType, fn, capture);
+    });
+    return this;
   },
   off(eventType, fn) {
-    this.each(node => node.removeEventListener(eventType, fn))
-    return this 
+    this.each((node) => node.removeEventListener(eventType, fn));
+    return this;
   },
   onProxy(eventType, selector, fn) {
-    this.each(node => {
+    this.each((node) => {
       node.addEventListener(eventType, (e) => {
-        let t = e.target
+        let t = e.target;
         while (!t.matches(selector)) {
           if (t === node) {
-            t = null
-            return 
+            t = null;
+            return;
           }
-          t = t.parentNode
+          t = t.parentNode;
         }
-        t && fn.call(t, e, t)
-      })
-    })
-    return this
+        t && fn.call(t, e, t);
+      });
+    });
+    return this;
   },
-
-
-
-  after(node, node2) {
-    node.parentNode.insertBefore(node2, node.nextSibling);
+  
+  remove() {
+    this.each((node) => node.parentNode.removeChild(node));
+    return this;
   },
-  before(node, node2) {
-    node.parentNode.insertBefore(node2, node);
-  },
-  append2(parent, node) {
-    parent.appendChild(node);
-  },
-  wrap(node, parent) {
-    dom.before(node, parent);
-    parent.appendChild(node);
-  },
-
-  remove(node) {
-    node.parentNode.removeChild(node);
-    return node;
-  },
-  empty(node) {
-    const { childNodes } = node;
-
-    // 移除之后数组是实时变化的
-    let x = node.firstChild;
-    while (x) {
-      array.push(dom.remove(node.firstChild));
-      x = node.firstChild;
-    }
-    return array;
-  },
-  attr(node, name, value) {
-    //重载
-    if (arguments.length === 3) {
-      node.setAttribute(name, value);
-    } else if (arguments.length === 2) {
-      return node.getAttribute(name);
+  empty(returnChild = true) {
+    $children = this.children()
+    $children.remove()
+    if (returnChild) {
+      return $children
+    } else {
+      return this
     }
   },
-
 
 };
